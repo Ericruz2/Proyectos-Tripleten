@@ -1,0 +1,245 @@
+# Introducción 
+''' Como analista de datos, tu trabajo consiste en analizar datos para extraer información valiosa y tomar decisiones basadas en ellos.
+Esto implica diferentes etapas, como la descripción general de los datos, el preprocesamiento y la prueba de hipótesis.
+Siempre que investigamos, necesitamos formular hipótesis que después podamos probar. A veces aceptamos estas hipótesis; otras veces, las rechazamos. 
+Para tomar las decisiones correctas, una empresa debe ser capaz de entender si está haciendo las suposiciones correctas.
+
+En este proyecto, compararás las preferencias musicales de las ciudades de Springfield y Shelbyville. 
+Estudiarás datos reales de transmisión de música online para probar la hipótesis a continuación y comparar 
+el comportamiento de los usuarios y las usuarias de estas dos ciudades.
+'''
+
+# Objetivo:
+''' Prueba la hipótesis:
+1. La actividad de los usuarios y las usuarias difiere según el día de la semana y dependiendo de la ciudad.
+'''
+# -----------------------------
+# 1. Cargar y mostrar datos
+# -----------------------------
+# Importar pandas
+import pandas as pd
+
+# Leer el archivo y almacenarlo en df
+df = pd.read_csv('C:/Users/agustin/Downloads/music_project_en.csv')
+
+# Obtener las 10 primeras filas de la tabla df
+print (df.head(10))
+
+# Obtener la información general sobre nuestros datos
+print (df.info())
+
+# -----------------------------
+# 2. Preprocesamiento de datos
+# -----------------------------
+# Muestra los nombres de las columnas
+columns_new ={
+    '  userID':'user_id',
+    'Track': 'track',
+    'artist': 'artist',
+    'genre': 'genre',
+    '  City  ': 'city',
+    'time': 'time',
+    'Day':'day'
+}
+
+df =df.rename(columns= columns_new)
+print (df.columns)
+
+# Bucle en los encabezados poniendo todo en minúsculas
+new_col_name = []
+for old_name in df.columns:
+    name_lowered = old_name.lower()
+    new_col_name.append (name_lowered)
+
+df.columns =new_col_name
+
+print (df.columns)
+
+# Bucle en los encabezados eliminando los espacios
+new_col_name = []
+for old_name in df.columns:
+    name_lowered = old_name.lower()
+    name_stripped= name_lowered.strip()
+    new_col_name.append (name_stripped)
+    
+
+df.columns =new_col_name
+
+print (df.columns)
+
+# Cambiar el nombre de la columna "userid"
+new_col_name = []
+for old_name in df.columns:
+    name_lowered = old_name.lower()
+    name_stripped= name_lowered.strip()
+    new_col_name.append (name_stripped)
+    
+df.columns =new_col_name    
+df = df.rename (columns = {"userid": "user_id"})
+
+print (df.columns)
+
+# Comprobar el resultado: la lista de encabezados
+new_col_name = []
+for old_name in df.columns:
+    name_lowered = old_name.lower()
+    name_stripped= name_lowered.strip()
+    new_col_name.append (name_stripped)
+    
+df.columns =new_col_name    
+df = df.rename (columns = {"userid": "user_id"})
+
+print (df.columns)
+
+# Calcular el número de valores ausentes
+print (df.info())
+
+# Bucle en los encabezados reemplazando los valores ausentes con 'unknown'
+new_col_name = []
+for old_name in df.columns:
+    name_lowered = old_name.lower()
+    name_stripped= name_lowered.strip()
+    new_col_name.append (name_stripped)
+    
+df.columns =new_col_name    
+df = df.rename (columns = {"userid": "user_id"})
+
+columns_to_replace = ['track', 'artist', 'genre']
+
+for col in columns_to_replace:
+    df[col].fillna('unknown',inplace = True)
+       
+print (df.info())
+
+# Contar valores ausentes
+new_col_name = []
+for old_name in df.columns:
+    name_lowered = old_name.lower()
+    name_stripped= name_lowered.strip()
+    new_col_name.append (name_stripped)
+    
+df.columns =new_col_name    
+
+df = df.rename (columns = {"userid": "user_id"})
+
+columns_to_replace = ['track', 'artist', 'genre']
+
+for col in columns_to_replace:
+    df[col].fillna('unknown',inplace = True)
+       
+null_values= df.isna().sum()
+
+print (df.info())
+print ()
+print ("Valores ausentes en cada columna despues del reemplazo:\n",null_values)
+
+# Contar duplicados explícitos
+new_col_name = []
+for old_name in df.columns:
+    name_lowered = old_name.lower()
+    name_stripped= name_lowered.strip()
+    new_col_name.append (name_stripped)
+    
+df.columns =new_col_name    
+
+df = df.rename (columns = {"userid": "user_id"})
+
+columns_to_replace = ['track', 'artist', 'genre']
+
+for col in columns_to_replace:
+    df[col].fillna('unknown',inplace = True)
+    
+
+num_duplicados =df.duplicated().sum()
+print ('Numeros de duplicados explícitos:\n', num_duplicados)   
+
+# Eliminar duplicados explícitos
+df =df.drop_duplicates()    
+num_duplicados_eliminados=df.duplicated().sum()
+print ('Numeros de duplicados despues de eliminarlos:\n', num_duplicados_eliminados)
+
+# Comprobar de nuevo si hay duplicados
+num_duplicados =df.duplicated().sum()
+print ('Numeros de duplicados explícitos:\n', num_duplicados)
+
+
+print()  
+df =df.drop_duplicates()    
+num_duplicados_eliminados=df.duplicated().sum()
+print ('Numeros de duplicados despues de eliminarlos:\n', num_duplicados_eliminados)
+
+# Inspeccionar los nombres de géneros únicos
+df_orden = df.sort_values(by= 'genre')
+
+print (f"Géneros únicos:\n",df_orden['genre'].unique())
+
+# Función para reemplazar duplicados implícitos
+def replace_wrong_genres (df, wrong_genres, correct_genre):
+    df_copy =df.copy()
+    
+    for wrong_genre in wrong_genres:
+        df_copy["genre"]= df_copy["genre"].replace(wrong_genres,correct_genre)
+        
+    return df_copy
+
+   
+
+wrong_genres={"hip", "hop","hip-hop"}
+correct_genre= "hiphop"
+
+
+df= replace_wrong_genres(df,wrong_genres, correct_genre)
+print (df)
+
+# Eliminar duplicados implícitos
+df= replace_wrong_genres(df,wrong_genres, correct_genre)
+print (df)
+
+# Comprobación de duplicados implícitos
+print (df["genre"].head(30))
+
+# -----------------------------
+# Etapa 3. Prueba de hipótesis  
+# -----------------------------
+# Contar las canciones reproducidas en cada ciudad
+
+grouped_city = df.groupby( "city")["user_id"].count()
+print (grouped_city)
+
+# Calcular las canciones reproducidas en cada uno de los tres días
+
+grouped_day= df[df["day"].isin(["Monday","Wednesday","Friday"])]
+grouped_city_day =grouped_day.groupby(["day","city"])["track"].count()
+
+print (grouped_city_day)
+
+# Declara la función number_tracks() con dos parámetros: day= y city=.
+def number_tracks(df,day,city):
+    
+    filas_day= df[df["day"]== day]
+    filas_city = filas_day[filas_day["city"]==city]
+    id_count = filas_city["user_id"].count()
+    
+    return id_count
+
+# El número de canciones reproducidas en Springfield el lunes
+print (number_tracks (df, "Monday", "Springfield"))
+
+# El número de canciones reproducidas en Shelbyville el lunes
+print (number_tracks (df, "Monday", "Shelbyville"))
+
+# El número de canciones reproducidas en Springfield el miércoles
+print (number_tracks (df, "Wednesday", "Springfield"))
+
+# El número de canciones reproducidas en Shelbyville el miércoles
+print (number_tracks (df, "Wednesday", "Shelbyville"))
+
+# El número de canciones reproducidas en Springfield el viernes
+print (number_tracks (df, "Friday", "Springfield"))
+
+# El número de canciones reproducidas en Shelbyville el viernes
+print (number_tracks (df, "Friday", "Shelbyville"))
+
+print("""Los datos analizados confirman que la actividad musical de los usuarios varía según el día de la semana y la ciudad.
+Springfield muestra consistentemente mayor número de reproducciones que Shelbyville, especialmente los lunes y viernes.
+Esto respalda la hipótesis planteada y sugiere que las estrategias de contenido podrían adaptarse a los patrones específicos de cada ciudad.""")
